@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,7 +16,29 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   )
-  console.log(`server port is: ${process.env.SERVER_PORT}`)
+
+  const configService = app.get(ConfigService);
+
+  const port = configService.get<number>('server.port');
+  const env = configService.get<string>('server.env');
+  const host = configService.get<string>('database.host')
+  const db_port = configService.get<number>('database.port')
+  const username = configService.get<string>('database.username')
+  const password = configService.get<string>('database.password')
+  const db_name = configService.get<string>('database.database')
+
+  
+  console.log(`Running in ${env} mode on port ${port}`);
   await app.listen(process.env.SERVER_PORT ?? 3000);
 }
 bootstrap();
+
+// console.log('================= CONFIG VALUES =================');
+// console.log(`🌍 Environment       : ${env}`);
+// console.log(`🚀 Server Port       : ${port}`);
+// console.log(`🗄️  Database Host     : ${host}`);
+// console.log(`🔌 Database Port     : ${db_port}`);
+// console.log(`👤 DB Username       : ${username}`);
+// console.log(`🔑 DB Password       : ${password}`);
+// console.log(`📦 DB Name           : ${db_name}`);
+// console.log('=================================================');

@@ -12,6 +12,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import databaseConfig, { DatabaseConfig } from './common/config/database.config';
 import serverConfig from './common/config/server.config'
+import * as joi from 'joi';
 
 @Module({
   imports: [
@@ -21,6 +22,20 @@ import serverConfig from './common/config/server.config'
         envFilePath: '.development.env',
         isGlobal: true,
         load: [databaseConfig, serverConfig],
+        validationSchema: joi.object({
+          DB_HOST: joi.string(),
+          DB_PORT: joi.number().port().default(5432),
+          DB_PASSWORD: joi.string(),
+          DB_NAME: joi.string(),
+          DB_USERNAME: joi.string(),
+          DB_TYPE: joi.string(),
+          SERVER_PORT: joi.number().port().default(3000),
+          NODE_ENV: joi.string()
+        }),
+        validationOptions: {
+          allowUnknown: true,
+          abortEarly: true
+        }
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
