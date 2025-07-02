@@ -26,6 +26,6 @@ export class PaginationInput {
 
   @Field(() => SortOptions, { nullable: true, description: 'Optional ordering' })
   @IsOptional()
-  @ValidateNested()
+  // @ValidateNested()
   order?: SortOptions;
 }

@@ -3,7 +3,7 @@ import { Roles } from "../enum/role.enum";
 import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator'
 
 @InputType()
-export class CreateUserDto {
+export class UpdateUserDto {
     @IsOptional()
     @IsEmail()
     @Field({ nullable: true })
