@@ -36,8 +36,4 @@ export class CreateUserDto {
     @IsNotEmpty()    
     @Field()
     password: string;
-
-    @IsNotEmpty()
-    @Field(() => Roles)
-    role: Roles;
 }

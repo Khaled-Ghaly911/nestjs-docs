@@ -13,6 +13,8 @@ import { User } from './users/user.entity';
 import databaseConfig, { DatabaseConfig } from './common/config/database.config';
 import serverConfig from './common/config/server.config'
 import * as joi from 'joi';
+import { JwtModule } from '@nestjs/jwt';
+import jwtConfig from './common/config/jwt.config';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import * as joi from 'joi';
     ConfigModule.forRoot({
         envFilePath: '.development.env',
         isGlobal: true,
-        load: [databaseConfig, serverConfig],
+        load: [databaseConfig, serverConfig, jwtConfig],
         validationSchema: joi.object({
           DB_HOST: joi.string(),
           DB_PORT: joi.number().port().default(5432),
@@ -30,7 +32,9 @@ import * as joi from 'joi';
           DB_USERNAME: joi.string(),
           DB_TYPE: joi.string(),
           SERVER_PORT: joi.number().port().default(3000),
-          NODE_ENV: joi.string()
+          NODE_ENV: joi.string(),
+          JWT_ACCESS_KEY: joi.string(),
+          JWT_REFRESH_KEY: joi.string()
         }),
         validationOptions: {
           allowUnknown: true,
@@ -70,6 +74,6 @@ import * as joi from 'joi';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtModule],
 })
 export class AppModule {}
