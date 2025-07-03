@@ -5,6 +5,7 @@ import { PaginationInput } from 'src/common/pagination/pagination-input';
 import { PaginatedUsers } from './dtos/paginated-users.dto'; 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -32,7 +33,11 @@ export class UsersResolver {
 
   @Query(() => User)
   async findUserByEmail(@Args('email') email: string): Promise<User> {
-    return this.usersService.findByEmail(email);
+    const user = await this.findUserByEmail(email);
+
+    if(!user) throw new NotFoundException("user's not found")
+
+    return user;
   }
 
   @Mutation(() => User)

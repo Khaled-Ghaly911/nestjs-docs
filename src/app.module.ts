@@ -14,6 +14,7 @@ import databaseConfig, { DatabaseConfig } from './common/config/database.config'
 import serverConfig from './common/config/server.config'
 import * as joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
+import { RedisModule } from './redis/redis.module';
 import jwtConfig from './common/config/jwt.config';
 
 @Module({
@@ -72,6 +73,7 @@ import jwtConfig from './common/config/jwt.config';
         ApolloServerPluginLandingPageLocalDefault({ embed: true })
       ],
     }),
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtModule],

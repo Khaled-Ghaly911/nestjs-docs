@@ -3,11 +3,14 @@ import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { OtpModule } from 'src/otp/otp.module';
+import { AuthResolver } from './auth.resolver';
 
 @Global() 
 @Module({
   imports: [
     UsersModule,
+    OtpModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,7 +29,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       global: true,
     })
   ],
-  providers: [AuthService],
+  providers: [AuthService, AuthResolver],
   exports: [AuthService, JwtModule]
 })
 export class AuthModule {}

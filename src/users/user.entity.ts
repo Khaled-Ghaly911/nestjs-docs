@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Roles } from "./enum/role.enum";
+import { Role } from "./enum/role.enum";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @ObjectType()
@@ -29,10 +29,14 @@ export class User {
     @Field()
     password: string;
 
-    @Column({ type: 'enum', enum: Roles, default: Roles.USER })
-    @Field(() => Roles, { defaultValue: Roles.USER, nullable: true })
-    role: Roles;
+    @Column({ type: 'enum', enum: Role, default: Role.USER })
+    @Field(() => Role, { defaultValue: Role.USER, nullable: true })
+    role: Role;
 
+    @Column({ default: false })
+    @Field(() => Boolean, { nullable: true, defaultValue: false })
+    isVerified: boolean;
+    
     @CreateDateColumn()
     @Field(() => Date)
     createdAt: Date;
