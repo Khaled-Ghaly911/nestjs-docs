@@ -6,6 +6,9 @@ import { VerifyUserDto } from './dtos/verify-user.dto';
 import { RequestOtpDto } from './dtos/request-otp.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { SignInDto } from './dtos/sign-in.dto';
+import { User } from 'src/users/user.entity';
+import { GetUser } from './decorators/current-user.decorator';
+import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
 @Resolver(() => AuthResponse)
 export class AuthResolver {
@@ -41,5 +44,10 @@ export class AuthResolver {
     @Mutation(() => Boolean) 
     async resetPassword(@Args('resetPasswordDto') resetPasswordDto: ResetPasswordDto) {
         return await this.authService.resetPassword(resetPasswordDto)
+    }
+
+    @Query(() => User)
+    async me(@GetUser() payLoad: JwtPayload): Promise<User> {
+        return this.authService.me(payLoad.userId);
     }
 }

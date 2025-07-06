@@ -33,7 +33,7 @@ export class AuthService {
 
         const payload = {
             userId: userId,
-            role: role
+            role
         }
 
         const access_token = this.jwtservice.sign(payload, { secret: access_key, expiresIn: '2d' });
@@ -104,6 +104,10 @@ export class AuthService {
         if(!user) {
             throw new NotFoundException("User's not found");
         }
+        if (!user.isVerified) {
+            throw new UnauthorizedException('Please verify your email before logging in.');
+        }
+
         //TO-DO: verify the creditentials
         const isOk: boolean = await bcrypt.compare(signInDto.password,user.password);
         if(!isOk) {
@@ -142,5 +146,15 @@ export class AuthService {
         } else {
             return false;
         }
+    }
+
+    async me(userId: string): Promise<User> {
+        const user: User | null = await this.usersService.findById(userId);
+
+        if(!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        return user;
     }
 }

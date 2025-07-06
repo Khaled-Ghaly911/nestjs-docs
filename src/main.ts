@@ -21,11 +21,6 @@ async function bootstrap() {
 
   const port = configService.get<number>('server.port');
   const env = configService.get<string>('server.env');
-  const host = configService.get<string>('database.host')
-  const db_port = configService.get<number>('database.port')
-  const username = configService.get<string>('database.username')
-  const password = configService.get<string>('database.password')
-  const db_name = configService.get<string>('database.database')
 
   
   console.log(`Running in ${env} mode on port ${port}`);

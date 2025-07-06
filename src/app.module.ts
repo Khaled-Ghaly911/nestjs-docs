@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, NotFoundException } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriverConfig, ApolloDriver } from "@nestjs/apollo";
-import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageReporting';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
@@ -16,6 +15,8 @@ import * as joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from './redis/redis.module';
 import jwtConfig from './common/config/jwt.config';
+import * as jwt from 'jsonwebtoken';
+
 
 @Module({
   imports: [
@@ -63,16 +64,43 @@ import jwtConfig from './common/config/jwt.config';
         };
       },
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+    driver: ApolloDriver,
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: async (configService: ConfigService): Promise<ApolloDriverConfig> => ({
       autoSchemaFile: true,
       playground: false,
       introspection: true,
       plugins: [
-        // ApolloServerPluginUsageReporting(),
-        ApolloServerPluginLandingPageLocalDefault({ embed: true })
+        ApolloServerPluginLandingPageLocalDefault({ embed: true }),
       ],
+      context: ({ req }) => {
+        const header = req.headers['authentication'];
+
+        if (typeof header === 'string' && header.startsWith('Bearer ')) {
+          const token = header.split(' ')[1];
+          const access_key = configService.get<string>('jwt.access_key');
+          if(!access_key) {
+            throw new NotFoundException("the access key not found");
+          }
+          try {
+            const decoded = jwt.verify(
+              token,
+              access_key,
+            );
+            req.user = decoded;
+          } catch (err) {
+            req.user = null;
+          }
+        } else {
+          req.user = null;
+        }
+
+        return { req };
+      },
     }),
+  }),
     RedisModule,
   ],
   controllers: [AppController],

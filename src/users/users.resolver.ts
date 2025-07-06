@@ -5,8 +5,14 @@ import { PaginationInput } from 'src/common/pagination/pagination-input';
 import { PaginatedUsers } from './dtos/paginated-users.dto'; 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/gaurds/auth.gaurd';
+import { RolesGuard } from 'src/auth/gaurds/role.gaurd';
+import { Role } from './enum/role.enum';
+import { Roles } from 'src/auth/decorators/role.decorator';
 
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.USER)
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
@@ -26,6 +32,8 @@ export class UsersResolver {
     return this.usersService.findAll(paginationInput);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.USER)
   @Query(() => User)
   async findUserById(@Args('id') id: string): Promise<User> {
     return this.usersService.findById(id)
