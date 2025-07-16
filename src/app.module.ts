@@ -9,13 +9,18 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
-import databaseConfig, { DatabaseConfig } from './common/config/database.config';
-import serverConfig from './common/config/server.config'
+import databaseConfig, { DatabaseConfig } from 'common/config/database.config';
+import serverConfig from 'common/config/server.config'; 
 import * as joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from './redis/redis.module';
-import jwtConfig from './common/config/jwt.config';
+import { ChatModule } from './chat/chat.module';
+import { GalleryModule } from './gallery/gallery.module';
+import jwtConfig from 'common/config/jwt.config';
 import * as jwt from 'jsonwebtoken';
+import { Gallery } from './gallery/entities/gallery.entity';
+import { Message } from './chat/entities/message.entity';
+import { Chat } from './chat/entities/chat.entity';
 
 
 @Module({
@@ -58,7 +63,7 @@ import * as jwt from 'jsonwebtoken';
           username:    db.username,
           password:    db.password,
           database:    db.database,
-          entities:    [User],
+          entities:    [User, Chat, Gallery, Message],
           synchronize: db.synchronize,
           logging:      true,
         };
@@ -102,6 +107,8 @@ import * as jwt from 'jsonwebtoken';
     }),
   }),
     RedisModule,
+    ChatModule,
+    GalleryModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtModule],

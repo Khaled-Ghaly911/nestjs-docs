@@ -8,7 +8,7 @@ import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { SignInDto } from './dtos/sign-in.dto';
 import { User } from 'src/users/user.entity';
 import { GetUser } from './decorators/current-user.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
+import { JwtPayload } from 'common/interfaces/jwt-payload.interface';
 
 @Resolver(() => AuthResponse)
 export class AuthResolver {

@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Role } from "./enum/role.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Chat } from "src/chat/entities/chat.entity";
 
 @ObjectType()
 @Entity()
@@ -28,6 +29,10 @@ export class User {
     @Column()
     @Field()
     password: string;
+
+    @OneToMany(() => Chat, chat => chat.user, { nullable: true })
+    @Field(() => [Chat], { nullable: true })
+    chats: Chat[];
 
     @Column({ type: 'enum', enum: Role, default: Role.USER })
     @Field(() => Role, { defaultValue: Role.USER, nullable: true })

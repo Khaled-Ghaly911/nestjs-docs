@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './user.entity'; 
-import { PaginationInput } from 'src/common/pagination/pagination-input'; 
+import { PaginationInput } from 'common/pagination/pagination-input'; 
 import { PaginatedUsers } from './dtos/paginated-users.dto'; 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
